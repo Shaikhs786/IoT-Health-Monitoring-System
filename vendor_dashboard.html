@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pharmacy Vendor Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0a1628; --surface: rgba(255,255,255,0.05); --border: rgba(255,255,255,0.09);
+      --text: #e2e8f0; --muted: rgba(255,255,255,0.4);
+      --green: #10b981; --emerald: #059669; --red: #ef4444; --orange: #f59e0b; --cyan: #06b6d4;
+    }
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg,#0a1628 0%,#0d2137 50%,#0a2818 100%); background-attachment: fixed; color: var(--text); min-height: 100vh; }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,22,40,0.9); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1.1rem; color: #fff; }
+    .nav-brand .icon { width: 38px; height: 38px; background: linear-gradient(135deg,var(--green),var(--emerald)); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; }
+    .btn-logout { padding: 8px 18px; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: #34d399; border-radius: 10px; font-size: 0.82rem; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: background 0.2s; }
+    .btn-logout:hover { background: rgba(16,185,129,0.2); }
+
+    .main { max-width: 1100px; margin: 0 auto; padding: 28px 24px 48px; }
+    .page-header { margin-bottom: 28px; }
+    .page-header h2 { font-size: 1.5rem; font-weight: 800; color: #fff; }
+    .page-header p  { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+
+    /* STATS ROW */
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; display: flex; align-items: center; gap: 16px; }
+    .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+    .stat-icon.green   { background: rgba(16,185,129,0.15); color: var(--green); }
+    .stat-icon.orange  { background: rgba(245,158,11,0.15); color: var(--orange); }
+    .stat-icon.red     { background: rgba(239,68,68,0.15);  color: var(--red); }
+    .stat-icon.cyan    { background: rgba(6,182,212,0.15);  color: var(--cyan); }
+    .stat-num   { font-size: 1.8rem; font-weight: 900; color: #fff; line-height: 1; }
+    .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 24px; margin-bottom: 20px; }
+    .card-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+
+    /* ORDER TABLE */
+    .order-table { width: 100%; border-collapse: collapse; }
+    .order-table th { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+    .order-table td { padding: 14px; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+    .order-table tr:hover td { background: rgba(255,255,255,0.03); }
+    .order-table tr:last-child td { border-bottom: none; }
+
+    .badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; }
+    .badge-pending  { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); color: var(--orange); }
+    .badge-dispatch { background: rgba(6,182,212,0.15);  border: 1px solid rgba(6,182,212,0.3);  color: var(--cyan); }
+    .badge-done     { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: var(--green); }
+
+    .btn-action {
+      padding: 6px 14px; border-radius: 8px; font-size: 0.75rem; font-weight: 700;
+      font-family: 'Inter', sans-serif; cursor: pointer; border: none; transition: opacity 0.2s;
+    }
+    .btn-dispatch { background: linear-gradient(135deg,var(--cyan),#0284c7); color: #fff; }
+    .btn-done     { background: linear-gradient(135deg,var(--green),var(--emerald)); color: #fff; }
+    .btn-action:hover { opacity: 0.85; }
+
+    .empty-state { text-align: center; padding: 40px; color: var(--muted); }
+
+    /* INVENTORY */
+    .inv-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+    .inv-item { background: rgba(16,185,129,0.05); border: 1px solid rgba(16,185,129,0.15); border-radius: 12px; padding: 14px; }
+    .inv-name  { font-size: 0.88rem; font-weight: 700; color: #fff; }
+    .inv-stock { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+    .inv-bar   { height: 4px; background: rgba(255,255,255,0.08); border-radius: 4px; margin-top: 8px; overflow: hidden; }
+    .inv-fill  { height: 100%; background: linear-gradient(90deg,var(--green),var(--emerald)); border-radius: 4px; }
+    .inv-fill.low { background: linear-gradient(90deg,var(--red),#dc2626); }
+
+    .footer { text-align: center; padding: 20px; font-size: 0.78rem; color: rgba(255,255,255,0.2); border-top: 1px solid var(--border); margin-top: 40px; }
+
+    @media(max-width:700px){ .stats-row{grid-template-columns:1fr 1fr;} .inv-grid{grid-template-columns:1fr 1fr;} .navbar{padding:0 16px;} }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-brand">
+    <div class="icon"><i class="fas fa-pills"></i></div>
+    Apollo Pharmacy — Vendor Portal
+  </div>
+  <a href="/vendor-logout" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+</nav>
+
+<div class="main">
+  <div class="page-header">
+    <h2>Medicine Supply Dashboard</h2>
+    <p>Prescription orders from Dr. A. Sharma — Patient: {{ patient.name }}</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
+      <div><div class="stat-num">{{ pending }}</div><div class="stat-label">Pending Orders</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon cyan"><i class="fas fa-truck"></i></div>
+      <div><div class="stat-num">{{ dispatched }}</div><div class="stat-label">Dispatched</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+      <div><div class="stat-num">{{ delivered }}</div><div class="stat-label">Delivered</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="fas fa-prescription-bottle-medical"></i></div>
+      <div><div class="stat-num">{{ orders | length }}</div><div class="stat-label">Total Orders</div></div>
+    </div>
+  </div>
+
+  <!-- ORDERS TABLE -->
+  <div class="card">
+    <div class="card-title"><i class="fas fa-list-ul"></i> Prescription Orders</div>
+    {% if orders %}
+    <table class="order-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Medicine</th>
+          <th>Dose</th>
+          <th>Timing</th>
+          <th>Patient</th>
+          <th>Doctor</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+        <tr>
+          <td style="color:var(--muted);">{{ loop.index }}</td>
+          <td style="font-weight:700;color:#fff;"><i class="fas fa-capsules" style="color:var(--green);margin-right:6px;"></i>{{ o.name }}</td>
+          <td>{{ o.dose }}</td>
+          <td style="color:var(--muted);">{{ o.timing }}</td>
+          <td><span style="color:var(--cyan);font-weight:600;">{{ patient.name }}</span></td>
+          <td style="color:var(--muted);">Dr. A. Sharma</td>
+          <td>
+            {% if o.status == 'Pending' %}
+            <span class="badge badge-pending"><i class="fas fa-clock"></i> Pending</span>
+            {% elif o.status == 'Dispatched' %}
+            <span class="badge badge-dispatch"><i class="fas fa-truck"></i> Dispatched</span>
+            {% else %}
+            <span class="badge badge-done"><i class="fas fa-check"></i> Delivered</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if o.status == 'Pending' %}
+            <form method="POST" action="/vendor-update/{{ loop.index0 }}/Dispatched" style="display:inline;">
+              <button type="submit" class="btn-action btn-dispatch"><i class="fas fa-truck"></i> Dispatch</button>
+            </form>
+            {% elif o.status == 'Dispatched' %}
+            <form method="POST" action="/vendor-update/{{ loop.index0 }}/Delivered" style="display:inline;">
+              <button type="submit" class="btn-action btn-done"><i class="fas fa-check"></i> Delivered</button>
+            </form>
+            {% else %}
+            <span style="color:var(--green);font-size:0.8rem;">✓ Done</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <i class="fas fa-prescription-bottle fa-2x" style="display:block;margin-bottom:12px;"></i>
+      No prescription orders yet. Doctor will add medicines from the dashboard.
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- INVENTORY -->
+  <div class="card">
+    <div class="card-title"><i class="fas fa-warehouse"></i> Medicine Inventory (Demo)</div>
+    <div class="inv-grid">
+      <div class="inv-item">
+        <div class="inv-name">Paracetamol 500mg</div>
+        <div class="inv-stock">Stock: 850 units</div>
+        <div class="inv-bar"><div class="inv-fill" style="width:85%"></div></div>
+      </div>
+      <div class="inv-item">
+        <div class="inv-name">Amoxicillin 250mg</div>
+        <div class="inv-stock">Stock: 620 units</div>
+        <div class="inv-bar"><div class="inv-fill" style="width:62%"></div></div>
+      </div>
+      <div class="inv-item">
+        <div class="inv-name">Vitamin D3 1000 IU</div>
+        <div class="inv-stock">Stock: 940 units</div>
+        <div class="inv-bar"><div class="inv-fill" style="width:94%"></div></div>
+      </div>
+      <div class="inv-item">
+        <div class="inv-name">Omeprazole 20mg</div>
+        <div class="inv-stock">Stock: 180 units</div>
+        <div class="inv-bar"><div class="inv-fill low" style="width:18%"></div></div>
+      </div>
+      <div class="inv-item">
+        <div class="inv-name">Azithromycin 500mg</div>
+        <div class="inv-stock">Stock: 450 units</div>
+        <div class="inv-bar"><div class="inv-fill" style="width:45%"></div></div>
+      </div>
+      <div class="inv-item">
+        <div class="inv-name">Metformin 500mg</div>
+        <div class="inv-stock">Stock: 120 units</div>
+        <div class="inv-bar"><div class="inv-fill low" style="width:12%"></div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="footer">Smart Remote Patient Monitoring — Pharmacy Vendor Portal &copy; 2024</footer>
+
+<script>setTimeout(() => location.reload(), 30000);</script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Health History | {{ patient.name }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #0b1120; color: #e2e8f0; min-height: 100vh; padding: 32px 20px; }
+    .container { max-width: 860px; margin: 0 auto; }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 18px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+      font-size: 0.83rem; font-weight: 600;
+      margin-bottom: 28px;
+      transition: background 0.2s;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 6px; }
+    .subtitle { font-size: 0.83rem; color: rgba(255,255,255,0.4); margin-bottom: 24px; }
+    .row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 13px 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+      transition: background 0.2s;
+    }
+    .row:hover { background: rgba(255,255,255,0.07); }
+    .row-time { color: rgba(255,255,255,0.4); }
+    .row-vals { display: flex; gap: 20px; }
+    .t { color: #f59e0b; font-weight: 600; }
+    .b { color: #ef4444; font-weight: 600; }
+    .empty { text-align: center; padding: 60px 0; color: rgba(255,255,255,0.3); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/dashboard" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    <h1><i class="fas fa-chart-line" style="color:#06b6d4;margin-right:8px;"></i>Health History</h1>
+    <p class="subtitle">Last 20 readings for {{ patient.name }}</p>
+
+    {% if patient.records %}
+      {% for record in patient.records[-20:]|reverse %}
+      <div class="row">
+        <span class="row-time"><i class="fas fa-clock" style="margin-right:5px;"></i>{{ record.timestamp }}</span>
+        <div class="row-vals">
+          <span class="t"><i class="fas fa-thermometer-half"></i> {{ "%.1f"|format(record.temp) }}°C</span>
+          <span class="b"><i class="fas fa-heartbeat"></i> {{ record.bpm }} BPM</span>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty"><i class="fas fa-satellite-dish fa-2x" style="display:block;margin-bottom:12px;"></i>No records yet.</div>
+    {% endif %}
+  </div>
+  <script>setInterval(() => location.reload(), 60000);</script>
+</body>
+</html>
