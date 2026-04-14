@@ -1,5 +1,6 @@
 # 🏥 IoT HealthGuard: Remote Patient Monitoring System
 **Showcased at Hackspectra | Project for NLPC 2026 (National Level)**
+<img width="1918" height="1026" alt="Screenshot 2026-04-14 195904" src="https://github.com/user-attachments/assets/d40cf193-45f8-4712-8d4c-a2875798f216" />
 
 ## 🌟 Executive Summary
 IoT HealthGuard is a smart healthcare ecosystem designed to address the "Monitoring Gap" in rural areas.
@@ -9,6 +10,7 @@ The project features a robust multi-role dashboard allowing Doctors, Patients, a
 ## 🏆 Recognitions
 * **Hackspectra:** Successfully presented and showcased the functional prototype.
 * **NLPC 2026:** Selected for the National Level Project Competition (Open Innovation Theme).
+![full display](https://github.com/user-attachments/assets/42c84c9f-c54b-43d8-bfa8-91b8dd5969ca)
 
 ---
 
