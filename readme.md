@@ -10,7 +10,8 @@ The project features a robust multi-role dashboard allowing Doctors, Patients, a
 ## 🏆 Recognitions
 * **Hackspectra:** Successfully presented and showcased the functional prototype.
 * **NLPC 2026:** Selected for the National Level Project Competition (Open Innovation Theme).
-![full display](https://github.com/user-attachments/assets/42c84c9f-c54b-43d8-bfa8-91b8dd5969ca)
+![WhatsApp Image 2026-04-14 at 8 19 33 PM](https://github.com/user-attachments/assets/7f96ec75-6ede-48bc-aa2c-0eb8faf8b6a4)
+
 
 ---
 
